@@ -11,10 +11,10 @@ from event.KeyEvent import KeyEvent
 from pynput.keyboard import Listener, Key
 
 class Macro:
-    def startRecord(self):
+    def startRecord(list, self):    
         # print("Current date:",datetime.utcnow())
         # date = datetime.utcnow() 
-        KeyEvent()
+        KeyEvent(list)
         # print(str(date.hour) + ":" + str(date.minute) + ":" + str(date.second) + ":"+ str(date.microsecond))
 
         # seconds =(date.total_seconds())

@@ -5,17 +5,17 @@ import pyautogui
 
 class KeyEvent:
     isStart = False
-    def __init__(self):
+    def __init__(list, self):
         self.isStart = True
-        t = threading.Thread(target=self.start)
+        t = threading.Thread(target=self.start,args=(list))
         t.start()
         keyboard.on_press_key("r", lambda _: self.stop())
         
-    def start(self):
+    def start(list, self):
         while(self.isStart):
             date = datetime.utcnow() 
             point = pyautogui.position()
- 
+            list.insertItems()
             print("x: " + str(point[0]) + " y: "+ str(point[1])  + str(date.hour) + ":" + str(date.minute) + ":" + str(date.second) + ":"+ str(date.microsecond))
 
     def stop(self):
