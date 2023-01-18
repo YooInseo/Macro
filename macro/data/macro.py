@@ -1,21 +1,32 @@
 import threading
+from datetime import datetime
 
 import time
 import pyautogui
 import datetime as dt
 from data import data
+import threading
+from event.KeyEvent import KeyEvent
 
 from pynput.keyboard import Listener, Key
 
 class Macro:
     def startRecord(self):
-        data.record = True;
+        # print("Current date:",datetime.utcnow())
+        # date = datetime.utcnow() 
+        KeyEvent()
+        # print(str(date.hour) + ":" + str(date.minute) + ":" + str(date.second) + ":"+ str(date.microsecond))
 
-        while(data.record):
-            print("기록이 시작 됩니다." + str(pyautogui.position.x))
+        # seconds =(date.total_seconds())
+        # milliseconds = round(seconds*1000)
+        # print("Milliseconds since epoch:",milliseconds)
+        # data.record = True
 
-            time.sleep(1)
-        self.data.record = True # 레코딩 시작
+        # # while(data.record):
+        # #     # print("기록이 시작 됩니다." + str(pyautogui.position.x))
+
+        # #     time.sleep(1)
+        # self.data.record = True # 레코딩 시작
 
 
     def stopRecord(self):
@@ -24,6 +35,15 @@ class Macro:
 
     def playRecord(self):
         print("기록을 재생합니다.")
+
+
+    def getTime():
+        # print("Current date:",datetime.utcnow())
+        date = datetime.utcnow()  
+        # print("Number of days since epoch:",date)
+        seconds =(date.total_seconds())
+        milliseconds = round(seconds*1000)
+        # print("Milliseconds since epoch:",milliseconds)
 
         # self.thread = threading.Thread( target=self.start)
         # self.thread.start() # 스레드 시작

@@ -1,11 +1,12 @@
 from gui.gui import window
 from data.macro import Macro
-import pyautogui                                                
-import cv2 
+ 
+
 
 macro = Macro()
  
 app = window()
+ 
 
 # from pynput.keyboard import Listener, Key
  

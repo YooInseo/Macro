@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 from data.macro import Macro
 import pyautogui
-
+ 
 class window():
 
    def __init__(self):
@@ -15,7 +15,7 @@ class window():
 
       cb = QComboBox(widget)
       cb.addItem('Option1')
-      cb.addItem('Option2') 0                                     
+      cb.addItem('Option2')                                    
       cb.addItem('Option3')
       cb.addItem('Option4')
       cb.move(100, 0)
@@ -47,6 +47,8 @@ class window():
       widget.setGeometry(1000,450,320,200)
       widget.setWindowTitle("Macro Recorder")
       widget.show()
+
+
       sys.exit(app.exec_())
 
  
