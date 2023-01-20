@@ -3,27 +3,25 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QThread
 from pynput import keyboard
-from data.data import data
- 
 
+class data:
+    startKey = any 
+  
 class MyThread(QThread):
-    cnt=0
-    running= False
-
     def __init__(self):
         super().__init__()  
   
     def on_press(self,key):
         try:
-            if data.startKey is not any:
-                print(key.char)
-                print(str(key.char == data.startKey))
-                if key == data.startKey:
+            if data.startKey is not any: #startKey 값이 any 타입이 아닐 경우 
+                if key == data.startKey: 
                     print(f'알파벳 \'{key.char}\' 눌림ㅎㅎ' )
-                    
+
         except AttributeError:
               if data.startKey is not any:
-                if str(key).replace("Key.","") == data.startKey:
+                #일반 알파벳 키가 아닌 특수 키일 경우, Key.cmd 와 같은 형식으로 key값이 반환 되므로,
+                #  해당 문자열을 공백으로 바꾼 후, 데이터에 존재하는 키와 비교한다.
+                if str(key).replace("Key.","") == data.startKey:  
                     print("test")
                     # print(f'특수키 \'{key.char}\' 눌림ㅎㅎ' ) 
  
@@ -57,21 +55,14 @@ class MyWindow(QMainWindow):
 
         self.label = QLabel("My text")
         self.label.setGeometry(100,0,300,100)
-        # self.layout.addWidget(self.label)
 
         self.combo_box = QComboBox(self)
   
-        # setting geometry of combo box
         self.combo_box.setGeometry(0, 0, 300, 100)
         
-        
-        #TODO 바뀐 값을 키에 등록 해야함.
         self.combo_box.currentTextChanged.connect(self.changeKey)
-        # values = [e.value for e in Color]
 
         names = [member.name for member in keyboard.Key]
-        print(names) 
-        # print(keyboard.Key.list)
         self.combo_box.addItems(names)
 
         # adding items to combo box
