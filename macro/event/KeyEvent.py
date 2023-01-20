@@ -1,17 +1,26 @@
 import keyboard
 import threading
+from pynput import keyboard
+from data.data import data
 from datetime import datetime
 import pyautogui
 
+
 class KeyEvent:
     isStart = False
-    def __init__(list, self):
+
+    def __init__(self, list):
         self.isStart = True
-        t = threading.Thread(target=self.start,args=(list))
-        t.start()
-        keyboard.on_press_key("r", lambda _: self.stop())
-        
-    def start(list, self):
+        self.info = data()
+        # self.thread = threading.Thread(target=self.detect) 
+        # self.thread.start()
+
+    def detect(self):
+        while(True):
+            if keyboard.is_pressed("a"):
+                print("메크로 시작!")
+
+    def start(self, list):
         while(self.isStart):
             date = datetime.utcnow() 
             point = pyautogui.position()
@@ -21,6 +30,37 @@ class KeyEvent:
     def stop(self):
         self.isStart = False
         print("중지됩니다.")
+        # del(self.t)
+
+    def registerKey(self,key):
+        print(key," 값으로 변경됨")
+        # keyboard.on_press_key(key, lambda _: self.stop())
+
+    def on_press(key):
+        try: 
+            if(data.startKey is not any):
+                print("test" , data.startKey)
+                 
+        except: 
+            print()
+                # self.start()
+            # print('Alphanumeric key pressed: {0} '.format(
+            #     key.char))
+        
+
+    def on_release(key):
+        # print('Key released: {0}'.format(
+        #     key))
+        if key == keyboard.Key.esc:
+            # Stop listener
+            return False
+
+    # Collect events until released
+    with keyboard.Listener(
+            on_press=on_press,
+            on_release=on_release) as listener:
+        listener.join()
+    
 # while True:
 #     if keyboard.read_key() == "p":rrrrrrrrrrrrrrrrrrrr
 #         print("You pressed p")

@@ -1,20 +1,17 @@
 import threading
 from datetime import datetime
-
 import time
 import pyautogui
 import datetime as dt
 from data import data
-import threading
 from event.KeyEvent import KeyEvent
-
 from pynput.keyboard import Listener, Key
 
 class Macro:
     def __init__(self, info):
         self.info = info
 
-    def startRecord(list, self):    
+    def startRecord(list):    
         # print("Current date:",datetime.utcnow())
         # date = datetime.utcnow() 
         KeyEvent(list)
