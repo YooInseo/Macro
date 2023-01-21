@@ -4,9 +4,11 @@ from pynput import keyboard
 from PyQt5.QtCore import QThread
 from datetime import datetime
 import time
+import pyautogui
 
 class data:
     startKey = any 
+    playing = False
     isRecording = False
     record = set()
 
@@ -15,17 +17,48 @@ class Macro(QThread):
     def __init__(self, Widget):
         super().__init__() 
         self.entry = Widget.entry
-       
+        self.loadButton = Widget.loadButton
+        self.newButton = Widget.newButton
+        self.startButton = Widget.startButton
+        self.settingButton = Widget.settingButton
          
     def run(self):
+        index = 0
         while(True):
             if(data.isRecording):
                 now = datetime.now()
-                it = QtGui.QStandardItem(str(now))
-                self.entry.appendRow(it)
-                # data.record.add(time.time)
-            time.sleep(0.1)
+                x = pyautogui.position()[0]
+                y = pyautogui.position()[1]
 
+                it = QtGui.QStandardItem("x= (" +str(x) +")" + " y= (" +str(y) +")")
+                self.entry.appendRow(it)
+                
+                self.loadButton.setDisabled(True)
+                self.newButton.setDisabled(True)
+                self.startButton.setDisabled(True)
+                self.settingButton.setDisabled(True)
+                
+                data.record.add(pyautogui.position())
+           
+
+                time.sleep(0.1)
+            elif data.playing is not True:
+                self.loadButton.setDisabled(False)
+                self.newButton.setDisabled(False)
+                self.startButton.setDisabled(False)
+                self.settingButton.setDisabled(False)
+                
+            else:
+                length = len(data.record)
+                if (length - 1) != index:
+                    index += 1
+                    position = list(data.record)[index]
+                    pyautogui.moveTo(position[0], position[1])
+                    time.sleep(0.1)
+                else:
+                    index=0
+                    break
+                    
 class Listner(QThread):
     def __init__(self):
         super().__init__()  
@@ -55,7 +88,7 @@ class Listner(QThread):
         with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
          listener.join()
 
-class Widget(QtWidgets.QWidget):
+class Widget(QtWidgets.QWidget): #TODO 저장, 초기화 버튼 만들기
     def __init__(self):
         super().__init__()
         lay = QtWidgets.QVBoxLayout(self)
@@ -77,8 +110,16 @@ class Widget(QtWidgets.QWidget):
         self.combo_box.addItems(names)
 
         self.newButton = QtWidgets.QPushButton("새로 만들기")
+        self.newButton.setToolTip("메크로를 새로 만듭니다.")        
+
         self.loadButton = QtWidgets.QPushButton("불러오기")
-        
+        self.loadButton.setToolTip("저장한 메크로를 불러옵니다.") 
+        # self.loadButton.setDisabled(True)       
+
+        self.startButton = QtWidgets.QPushButton("재생")
+        self.startButton.clicked.connect(self.playRecord)
+
+        self.settingButton = QtWidgets.QPushButton("설정")
         lay.addWidget(self.combo_box)
         lay.addWidget(self.listView)
 
@@ -86,19 +127,12 @@ class Widget(QtWidgets.QWidget):
         lay.addLayout(self.hlay)
         self.hlay.addWidget(self.newButton)
         self.hlay.addWidget(self.loadButton)
-
+        self.hlay.addWidget(self.startButton)
+        self.hlay.addWidget(self.settingButton)
         self.entry = QtGui.QStandardItemModel()
         self.listView.setModel(self.entry)
 
         self.listView.clicked[QtCore.QModelIndex].connect(self.on_clicked)
-        # When you receive the signal, you call QtGui.QStandardItemModel.itemFromIndex() 
-        # on the given model index to get a pointer to the item        
-        
-        # for a in range(100):
-        #     it = QtGui.QStandardItem(str(a))
-        #     self.entry.appendRow(it)
-
-        self.itemOld = QtGui.QStandardItem("text")
 
         self.Thread1 = Listner()
         self.Thread1.start()
@@ -106,6 +140,9 @@ class Widget(QtWidgets.QWidget):
         self.macro = Macro(self) #TODO 메크로를 병렬 처리 하여, 만약, 
         self.macro.start()
 
+    def playRecord(self):
+        data.playing = True
+        
     def changeKey(self):
             data.startKey = self.combo_box.currentText()
             print(data.startKey + "해당 키로 단축키가 바뀜")
@@ -117,7 +154,6 @@ class Widget(QtWidgets.QWidget):
                            "".format(item.index().row(), item.text()))
         self.itemOld = item
 
-print(__name__)
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     w = Widget()
