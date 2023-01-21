@@ -1,29 +1,50 @@
 import sys
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
 from PyQt5.QtCore import QThread
 from pynput import keyboard
+import time
+from datetime import datetime
 
 class data:
     startKey = any 
+    isRecording = False
+    record = set()
+ 
+
   
-class MyThread(QThread):
+class Macro(QThread):
+
+    def __init__(self):
+        super().__init__()  
+
+    def run(self):
+        while(True):
+            if(data.isRecording):
+                now = datetime.now()
+                print(now)
+                # data.record.add(time.time)
+            time.sleep(0.1)
+
+class Listner(QThread):
     def __init__(self):
         super().__init__()  
   
     def on_press(self,key):
         try:
             if data.startKey is not any: #startKey 값이 any 타입이 아닐 경우 
-                if key == data.startKey: 
+                if (str(key).replace("Key.","")) == data.startKey: 
                     print(f'알파벳 \'{key.char}\' 눌림ㅎㅎ' )
 
         except AttributeError:
               if data.startKey is not any:
                 #일반 알파벳 키가 아닌 특수 키일 경우, Key.cmd 와 같은 형식으로 key값이 반환 되므로,
                 #  해당 문자열을 공백으로 바꾼 후, 데이터에 존재하는 키와 비교한다.
-                if str(key).replace("Key.","") == data.startKey:  
-                    print("test")
-                    # print(f'특수키 \'{key.char}\' 눌림ㅎㅎ' ) 
+                if str(key).replace("Key.","") == data.startKey: 
+                    if data.isRecording is not True:
+                        data.isRecording = True
+                    else:
+                        data.isRecording = False
+                     
  
     def on_release(self,key):
         if key == keyboard.Key.esc:
@@ -42,9 +63,15 @@ class MyWindow(QMainWindow):
         self.setWindowTitle("Macro")
         self.setGeometry(1000, 200, 300, 300)
 
-        self.Thread1 = MyThread()
-        self.Thread1.start()
         self.UIComponents()
+        
+        self.Thread1 = Listner()
+        self.Thread1.start()
+        
+        self.macro = Macro() #TODO 메크로를 병렬 처리 하여, 만약, 
+        self.macro.start()
+
+         
 
     def changeKey(self):
         data.startKey = self.combo_box.currentText()
@@ -64,15 +91,6 @@ class MyWindow(QMainWindow):
 
         names = [member.name for member in keyboard.Key]
         self.combo_box.addItems(names)
-
-        # adding items to combo box
-        # adding Geek to the combobox
-        # combo_box.addItem("Geek")
-        # adding Super Geek to the combobox
-        # combo_box.addItem("Super Geek")
-        # adding Ultra Geek to the combobox
-        # combo_box.addItem("Ultra Geek")
- 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
